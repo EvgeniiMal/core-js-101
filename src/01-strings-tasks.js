@@ -203,7 +203,7 @@ function extractEmails(str) {
  *
  */
 function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+  throw new Error('not implemented');
 }
 
 
