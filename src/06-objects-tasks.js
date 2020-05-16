@@ -114,32 +114,71 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  selector: '',
+  callStack: [],
+
+  checkNunberOfSelectors(sel) {
+    if (this.callStack.some((el) => el === sel)) throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    this.callStack.push(sel);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  throwOrderError() {
+    throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    if (this.callStack.length !== 0) this.throwOrderError();
+    this.checkNunberOfSelectors('element');
+    this.selector += value;
+    return this;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    if (this.callStack[this.callStack.length - 1] !== 'element' && this.callStack.length !== 0) this.throwOrderError();
+    this.checkNunberOfSelectors('id');
+    this.selector += `#${value}`;
+    return this;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    if (this.callStack.some((el) => el === 'attribute' || el === 'pseudo-lcass' || el === 'pseudo-element')) this.throwOrderError();
+    this.callStack.push('class');
+    this.selector += `.${value}`;
+    return this;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    if (this.callStack.some((el) => el === 'pseudo-lcass' || el === 'pseudo-element')) this.throwOrderError();
+    this.callStack.push('attr');
+    this.selector += `[${value}]`;
+    return this;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    if (this.callStack.some((el) => el === 'pseudo-element')) this.throwOrderError();
+    this.callStack.push('pseudo-class');
+    this.selector += `:${value}`;
+    return this;
+  },
+
+  pseudoElement(value) {
+    this.checkNunberOfSelectors('pseudo-element');
+    this.selector += `::${value}`;
+    return this;
+  },
+
+  combine(selector1, combinator, selector2) {
+    const x = selector2.stringify();
+    const y = selector1.stringify();
+    this.selector = y + combinator + x;
+    return this;
+  },
+
+  stringify() {
+    const tmp = this.selector;
+    this.selector = '';
+    this.callStack.length = 0;
+    return tmp;
   },
 };
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable array-callback-return */
 /* ********************************************************************************************
  *                                                                                            *
  * Plese read the following tutorial before implementing tasks:                               *
@@ -532,10 +534,14 @@ function distinct(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const result = new Map();
+  array.map((el) => {
+    if (result.has(keySelector(el))) result.get(keySelector(el)).push(valueSelector(el));
+    else result.set(keySelector(el), [valueSelector(el)]);
+  });
+  return result;
 }
-
 
 /**
  * Projects each element of the specified array to a sequence
@@ -567,8 +573,9 @@ function selectMany(arr, childrenSelector) {
  *   ['one','two','three'], [2]       => 'three'  (arr[2])
  *   [[[ 1, 2, 3]]], [ 0, 0, 1 ]      => 2        (arr[0][0][1])
  */
-function getElementByIndexes(/* arr, indexes */) {
-  throw new Error('Not implemented');
+function getElementByIndexes(arr, indexes) {
+  const i = indexes.shift();
+  return indexes.length === 0 ? arr[i] : getElementByIndexes(arr.flat(1), indexes);
 }
 
 
@@ -590,8 +597,14 @@ function getElementByIndexes(/* arr, indexes */) {
  *   [ 1, 2, 3, 4, 5, 6, 7, 8 ]   =>  [ 5, 6, 7, 8, 1, 2, 3, 4 ]
  *
  */
-function swapHeadAndTail(/* arr */) {
-  throw new Error('Not implemented');
+function swapHeadAndTail(arr) {
+  if (arr.length < 2) return arr;
+  const len = arr.length;
+  const head = arr.splice(0, len / 2);
+  if (len % 2 === 0) return [...arr, ...head];
+
+  const half = arr.shift();
+  return [...arr, half, ...head];
 }
 
 
