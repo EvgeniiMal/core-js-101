@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable array-callback-return */
 /* ********************************************************************************************
  *                                                                                            *
  * Plese read the following tutorial before implementing tasks:                               *
@@ -536,6 +534,7 @@ function distinct(arr) {
  */
 function group(array, keySelector, valueSelector) {
   const result = new Map();
+  // eslint-disable-next-line array-callback-return
   array.map((el) => {
     if (result.has(keySelector(el))) result.get(keySelector(el)).push(valueSelector(el));
     else result.set(keySelector(el), [valueSelector(el)]);
